@@ -10,20 +10,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-/*
-JWT claims struct
-*/
+//Token for JWT
 type Token struct {
-	UserId uint
+	UserID uint
 	jwt.StandardClaims
 }
 
-//a struct to rep user account
+//Account is for user account
 type Account struct {
 	gorm.Model
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	Token    string `json:"token";sql:"-"`
+	Token    string `json:"token" sql:"-"`
 }
 
 //Validate incoming user details...
@@ -52,6 +50,7 @@ func (account *Account) Validate() (map[string]interface{}, bool) {
 	return u.Message(false, "Requirement passed"), true
 }
 
+//Create to create an account
 func (account *Account) Create() map[string]interface{} {
 
 	if resp, ok := account.Validate(); !ok {
@@ -68,7 +67,7 @@ func (account *Account) Create() map[string]interface{} {
 	}
 
 	//Create new JWT token for the newly registered account
-	tk := &Token{UserId: account.ID}
+	tk := &Token{UserID: account.ID}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
 	account.Token = tokenString
@@ -80,6 +79,7 @@ func (account *Account) Create() map[string]interface{} {
 	return response
 }
 
+//Login is good
 func Login(email, password string) map[string]interface{} {
 
 	account := &Account{}
@@ -99,7 +99,7 @@ func Login(email, password string) map[string]interface{} {
 	account.Password = ""
 
 	//Create JWT token
-	tk := &Token{UserId: account.ID}
+	tk := &Token{UserID: account.ID}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
 	account.Token = tokenString //Store the token in the response
@@ -109,6 +109,7 @@ func Login(email, password string) map[string]interface{} {
 	return resp
 }
 
+//GetUser user by ID
 func GetUser(u uint) *Account {
 
 	acc := &Account{}

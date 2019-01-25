@@ -7,18 +7,15 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+//Contact is for users contacts
 type Contact struct {
 	gorm.Model
 	Name   string `json:"name"`
 	Phone  string `json:"phone"`
-	UserId uint   `json:"user_id"` //The user that this contact belongs to
+	UserID uint   `json:"user_id"` //The user that this contact belongs to
 }
 
-/*
- This struct function validate the required parameters sent through the http request body
-
-returns message and true if the requirement is met
-*/
+//Validate returns message and true if the requirement is met
 func (contact *Contact) Validate() (map[string]interface{}, bool) {
 
 	if contact.Name == "" {
@@ -29,7 +26,7 @@ func (contact *Contact) Validate() (map[string]interface{}, bool) {
 		return u.Message(false, "Phone number should be on the payload"), false
 	}
 
-	if contact.UserId <= 0 {
+	if contact.UserID <= 0 {
 		return u.Message(false, "User is not recognized"), false
 	}
 
@@ -37,6 +34,7 @@ func (contact *Contact) Validate() (map[string]interface{}, bool) {
 	return u.Message(true, "success"), true
 }
 
+//Create  creates a contact on contact struct
 func (contact *Contact) Create() map[string]interface{} {
 
 	if resp, ok := contact.Validate(); !ok {
@@ -50,6 +48,7 @@ func (contact *Contact) Create() map[string]interface{} {
 	return resp
 }
 
+//GetContact  finds contact by ID
 func GetContact(id uint) *Contact {
 
 	contact := &Contact{}
@@ -60,6 +59,7 @@ func GetContact(id uint) *Contact {
 	return contact
 }
 
+//GetContacts for a user ID
 func GetContacts(user uint) []*Contact {
 
 	contacts := make([]*Contact, 0)

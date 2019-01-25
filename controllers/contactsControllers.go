@@ -20,7 +20,7 @@ var CreateContact = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contact.UserId = user
+	contact.UserID = user
 	resp := contact.Create()
 	u.Respond(w, resp)
 }
