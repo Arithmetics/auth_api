@@ -19,6 +19,9 @@ func main() {
 	router.HandleFunc("/api/contacts/new", controllers.CreateContact).Methods("POST")
 	router.HandleFunc("/api/me/contacts", controllers.GetContactsFor).Methods("GET") //  user/2/contacts
 
+	router.HandleFunc("/api/game/new", controllers.CreateGame).Methods("POST")
+	router.HandleFunc("/api/me/games", controllers.GetMyGames).Methods("GET")
+
 	router.Use(app.JwtAuthentication) //attach JWT auth middleware
 
 	//router.NotFoundHandler = app.NotFoundHandler
